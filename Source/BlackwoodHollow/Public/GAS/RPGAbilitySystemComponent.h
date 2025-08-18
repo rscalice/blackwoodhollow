@@ -13,5 +13,4 @@ UCLASS()
 class BLACKWOODHOLLOW_API URPGAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-	
 };

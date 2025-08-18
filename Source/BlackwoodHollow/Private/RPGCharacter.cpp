@@ -17,6 +17,7 @@ ARPGCharacter::ARPGCharacter() :
 	abilitySystem = CreateDefaultSubobject<URPGAbilitySystemComponent>("AbilitySystemComponent");
 	attributeSet = CreateDefaultSubobject<URPGAttributeSet>("AttributeSet");
 
+	SetGenericTeamId((FGenericTeamId) Faction);
 	if (IsValid(abilitySystem))
 	{
 		abilitySystem->SetIsReplicated(true);
@@ -107,16 +108,6 @@ bool ARPGCharacter::ActivateAbilitiesWithTag(FGameplayTagContainer gameplayTags,
 		return false;
 	}
 	return abilitySystem->TryActivateAbilitiesByTag(gameplayTags, AllowRemoteActivation);
-}
-
-bool ARPGCharacter::ActivateMeleeSwordAbility(bool allowRemote)
-{
-	if (!IsValid(abilitySystem) && !IsValid(MeleeSwordAbility))
-	{
-		return false;
-	}
-
-	return abilitySystem->TryActivateAbility(MeleeAbilitySpecHandle);
 }
 
 void ARPGCharacter::GetActiveAbilitiesWithTag(FGameplayTagContainer abilityTags, TArray<UGameplayAbility*>& abilities, bool MatchExactTag)
@@ -225,16 +216,6 @@ void ARPGCharacter::setTestAbilities()
 	}
 }
 
-void ARPGCharacter::setMeleeAbilities()
-{
-	if (!IsValid(abilitySystem))
-	{
-		return;
-	}
-
-	MeleeAbilitySpecHandle = abilitySystem->GiveAbility(FGameplayAbilitySpec(MeleeSwordAbility, GetCharacterLevel(), INDEX_NONE, this));
-}
-
 // Called every frame
 void ARPGCharacter::Tick(float DeltaTime)
 {
@@ -257,7 +238,7 @@ UAbilitySystemComponent* ARPGCharacter::GetAbilitySystemComponent() const
 void ARPGCharacter::PossessedBy(AController* newController)
 {
 	Super::PossessedBy(newController);
-	teamID = FGenericTeamId(Fraction);
+	teamID = FGenericTeamId(Faction);
 
 	if (!abilitySystem)
 	{
@@ -270,7 +251,6 @@ void ARPGCharacter::PossessedBy(AController* newController)
 	}
 
 	ApplyDefaultAttributeEffects();
-	setMeleeAbilities();
 }
 
 void ARPGCharacter::HandleHealthChange(float deltaValue, AActor* causer)

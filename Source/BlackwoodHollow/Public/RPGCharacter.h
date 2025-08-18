@@ -12,9 +12,10 @@
 #include "RPGCharacter.generated.h"
 
 UENUM(BlueprintType)
-enum EFraction : int
+enum EFaction : int
 {
-	Friends = 0,
+	Player = 0,
+	Friendlies,
 	Enemies,
 	Civilians = 255
 };
@@ -46,110 +47,68 @@ public:
 	// Sets default values for this character's properties
 	ARPGCharacter();
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Attributes")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Attributes")
 	virtual int32 GetCharacterLevel() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Attributes")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Attributes")
 	virtual int32 GetHealth() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Attributes")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Attributes")
 	virtual int32 GetMaxHealth() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Attributes")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Attributes")
 	virtual int32 GetStamina() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Attributes")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Attributes")
 	virtual int32 GetMaxStamina() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Attributes")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Attributes")
 	virtual int32 GetExperience() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Attributes")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Attributes")
 	virtual int32 GetMaxExperience() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Attributes")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Attributes")
 	virtual int32 GetAdrenaline() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Attributes")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Attributes")
 	virtual int32 GetMaxAdrenaline() const;
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Abilities")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Abilities")
 	bool ActivateAbilitiesWithTag(FGameplayTagContainer gameplayTags, bool AllowRemoteActivation = true);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "RPG Responses")
+	UFUNCTION(BlueprintImplementableEvent, Category = "RPG|Attributes")
 	void OnHealthChange(float deltaValue, AActor* causer);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "RPG Responses")
+	UFUNCTION(BlueprintImplementableEvent, Category = "RPG|Attributes")
 	void OnStaminaChange(float deltaValue, AActor* causer);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "RPG Responses")
+	UFUNCTION(BlueprintImplementableEvent, Category = "RPG|Attributes")
 	void OnAdrenalineChange(float deltaValue, AActor* causer);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "RPG Responses")
+	UFUNCTION(BlueprintImplementableEvent, Category = "RPG|Attributes")
 	void OnExperienceChange(float deltaValue, AActor* causer);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "RPG Responses")
+	UFUNCTION(BlueprintImplementableEvent, Category = "RPG|Attributes")
 	void OnCharacterLevelUp(AActor* causer);
 
-	UFUNCTION(BlueprintImplementableEvent, Category = "RPG Responses")
+	UFUNCTION(BlueprintImplementableEvent, Category = "RPG|Attributes")
 	void OnDead();
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Abilities|Melee|Sword", meta = (Deprecated, DeprecatedMessage = "Use ActivateAbility"))
-	bool ActivateMeleeSwordAbility(bool allowRemote = true);
-
-	UFUNCTION(BlueprintCallable, Category = "RPG Abilities|Melee")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Abilities|Melee")
 	virtual void GetActiveAbilitiesWithTag(FGameplayTagContainer abilityTags, TArray<UGameplayAbility*>& abilities, bool MatchExactTag);
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Abilities")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Abilities")
 	virtual void ApplyGameplayEffect(TSubclassOf<UGameplayEffect> effect);
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Abilities")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Abilities")
 	virtual bool CanApplyGameplayEffect(TSubclassOf<UGameplayEffect> effect);
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Abilities")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Abilities")
 	virtual bool EquipWeapon(ARPGWeapon* Weapon, TEnumAsByte<EWeaponSlot> Slot);
 
-	UFUNCTION(BlueprintCallable, Category = "RPG Abilities")
+	UFUNCTION(BlueprintCallable, Category = "RPG|Abilities")
 	virtual bool ActivateAbilityBySlot(TEnumAsByte<EAbilitySlot> Slot, bool AllowRemoteActivation = true);
-
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	UPROPERTY()
-	class UAbilitySystemComponent* abilitySystem;
-
-	UPROPERTY(EditAnywhere, Category = "RPG Attributes")
-	class URPGAttributeSet* attributeSet;
-
-	UPROPERTY(EditAnywhere, Category = "RPG Attributes")
-	int32 characterLevel;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Attributes|Debug")
-	TArray<TSubclassOf<class UGameplayEffect>> defaultEffects;
-
-	UPROPERTY(EditAnywhere, Category = "RPG Abilities|Debug")
-	bool enableTestAbilities;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Abilities|Debug")
-	TArray<TSubclassOf<class UGameplayAbility>> TestAbilities;
-
-	virtual void setTestAbilities();
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "RPG Abilities|Melee|Sword")
-	TSubclassOf<class UGameplayAbility> MeleeSwordAbility;
-
-	FGameplayAbilitySpecHandle MeleeAbilitySpecHandle;
-
-	virtual void setMeleeAbilities();
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Teams")
-	TEnumAsByte<EFraction> Fraction = EFraction::Civilians;
-
-	FGenericTeamId teamID;
-
-	TMap<TEnumAsByte<EAbilitySlot>, FGameplayAbilitySpecHandle> SlotAbilityHandles;
-public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -176,10 +135,38 @@ public:
 
 	virtual FGenericTeamId GetGenericTeamId() const override;
 
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+	virtual void setTestAbilities();
+
+	class UAbilitySystemComponent* abilitySystem;
+	class URPGAttributeSet* attributeSet;
+
+	UPROPERTY(EditAnywhere, Category = "RPG|Attributes")
+	int32 characterLevel;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RPG|Abilities")
+	TArray<TSubclassOf<class UGameplayEffect>> defaultEffects;
+
+	UPROPERTY(EditAnywhere, Category = "RPG|Abilities|Debug")
+	bool enableTestAbilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RPG|Abilities|Debug")
+	TArray<TSubclassOf<class UGameplayAbility>> TestAbilities;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "RPG|Abilities|Teams")
+	TEnumAsByte<EFaction> Faction;
+
+
 protected:
+
+	UPROPERTY(BlueprintReadOnly, Category = "RPG|Abilities|Teams")
+	FGenericTeamId teamID;
+
+	TMap<TEnumAsByte<EAbilitySlot>, FGameplayAbilitySpecHandle> SlotAbilityHandles;
+
 	virtual void ClearAbilitySlot(TEnumAsByte<EAbilitySlot> AbilitySlot);
 	virtual void AddAbilityToSlot(TSubclassOf<UGameplayAbility> NewAbility, TEnumAsByte<EAbilitySlot> AbilitySlot);
 	virtual bool EquipRightHand(ARPGWeapon* Weapon);
 	virtual bool EquipLeftHand(ARPGWeapon* Weapon);
-
 };

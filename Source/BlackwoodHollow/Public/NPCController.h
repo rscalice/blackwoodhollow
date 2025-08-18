@@ -5,18 +5,22 @@
 #include "CoreMinimal.h"
 #include "AIController.h"
 #include "RPGCharacter.h"
-
 #include "NPCController.generated.h"
 
+/**
+ *
+ */
 UCLASS()
 class BLACKWOODHOLLOW_API ANPCController : public AAIController
 {
 	GENERATED_BODY()
 
 public:
+
+	UFUNCTION(BlueprintCallable)
 	void SetGenericTeamId(const FGenericTeamId& newTeamId) override;
 
 protected:
-	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& otherActor) const override;
 
+	virtual ETeamAttitude::Type GetTeamAttitudeTowards(const AActor& otherActor) const override;
 };
